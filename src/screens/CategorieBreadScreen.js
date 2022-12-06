@@ -1,28 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Button } from 'react-native-web'
+import { FlatList } from "react-native";
+import React from "react";
+import BreadItem from "../components/BreadItem";
+import { BREADS } from "../data/Bread.js";
 
+const CategorieBreadScreen = ({ navigation, route }) => {
+  const breads = BREADS.filter(
+    (bread) => bread.category === route.params.categoryID
+  );
 
-const CategorieBreadScreen = ({navigation}) => {
+  const handleSelectedCategory = (item) => {
+    navigation.navigate("Details", {
+      productID: item.id,
+      name: item.name,
+    });
+  };
+
+  const renderBreadItem = ({ item }) => (
+    <BreadItem item={item} onSelected={handleSelectedCategory} />
+  );
   return (
-    <View style={styles.container}>
-      <Text style={styles.texto}>CategorieBreadScreen</Text>
-      <Button title="Go to Detail" onPress={()=> navigation.navigate("Details")}></Button>
-    </View> 
-  )
-}
+    <FlatList
+      data={breads}
+      keyExtractor={(item) => item.id}
+      renderItem={renderBreadItem} 
+    />
+  );
+};
 
-export default CategorieBreadScreen
-
-const styles = StyleSheet.create({
-    container :{
-        flex:1,
-        backgroundColor:"#FF359C",
-        alignItems:"center",
-        justifyContent:"center"
-        
-    },
-    texto:{
-        fontFamily:"latoBold"
-    }
-})
+export default CategorieBreadScreen;
