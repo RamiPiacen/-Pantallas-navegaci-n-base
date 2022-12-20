@@ -1,16 +1,23 @@
 import { FlatList } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import BreadItem from "../components/BreadItem";
 import { BREADS } from "../data/Bread.js";
 
+import { useSelector, useDispatch, connect } from "react-redux";
+import { filteredBread, selectedBread } from "../store/actions/bread.action";
+
 const CategorieBreadScreen = ({ navigation, route }) => {
-  const breads = BREADS.filter(
-    (bread) => bread.category === route.params.categoryID
-  );
+  const dispatch = useDispatch();
+  const category = useSelector((state) => state.categories.selected);
+  const categoryBreads = useSelector((state) => state.categories.filteredBread);
+
+  useEffect(() => {
+    dispatch(filteredBread(category.id));
+  }, []);
 
   const handleSelectedCategory = (item) => {
+    dispatch(selectedBread(item.id));
     navigation.navigate("Details", {
-      productID: item.id,
       name: item.name,
     });
   };
@@ -20,11 +27,11 @@ const CategorieBreadScreen = ({ navigation, route }) => {
   );
   return (
     <FlatList
-      data={breads}
+      data={categoryBreads}
       keyExtractor={(item) => item.id}
-      renderItem={renderBreadItem} 
+      renderItem={renderBreadItem}
     />
   );
 };
 
-export default CategorieBreadScreen;
+export default connect() (CategorieBreadScreen);
